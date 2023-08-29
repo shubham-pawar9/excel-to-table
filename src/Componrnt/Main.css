@@ -1,0 +1,36 @@
+.mainDiv {
+    /* position: absolute; */
+    overflow: auto;
+}
+.inputDiv{
+    position: absolute;
+left: 50%;
+transform: translate(-50%);
+}
+table{
+    position: relative;
+    top: 50px;
+    border-collapse: collapse;
+}
+thead {
+    background-color: #dd9036fa;
+}
+thead tr:hover {
+    background-color: #cb7613fa;
+}
+tbody {
+    background-color: #e7e7e7d6;
+    color: #000;
+}
+tbody tr:hover {
+    background-color: #c6c1c1;
+}
+th {
+    padding: 5px 10px;
+}
+td {
+    padding: 5px 10px;
+}
+tr,th,td {
+    border: 1px solid black;
+}
