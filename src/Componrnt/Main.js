@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { ExcelRenderer, OutTable } from "react-excel-renderer";
+import { ExcelRenderer } from "react-excel-renderer";
 import "./Main.css";
+import Header from "./Header";
+import Table from "./Table";
+import JsonShow from "./JsonShow";
+
 const Main = () => {
   const [data, setData] = useState();
+  const [showJson, setShowJson] = useState();
   const handleUpload = (event) => {
     const file = event.target.files[0];
     ExcelRenderer(file, (err, resp) => {
@@ -14,35 +19,88 @@ const Main = () => {
     });
   };
 
+  const convertToJSON = () => {
+    if (!data) {
+      return null;
+    }
+
+    const headers = data[0].rows[0];
+    const jsonData = {};
+
+    for (let cellIndex = 0; cellIndex < headers.length; cellIndex++) {
+      const header = headers[cellIndex];
+      jsonData[header] = [];
+
+      for (let rowIndex = 1; rowIndex < data[0].rows.length; rowIndex++) {
+        const cellValue = data[0].rows[rowIndex][cellIndex];
+
+        if (cellValue !== undefined) {
+          jsonData[header].push(cellValue);
+        }
+      }
+    }
+
+    return JSON.stringify(jsonData, null, 2);
+  };
+  const handleDownload = () => {
+    if (!data) {
+      return;
+    }
+
+    const jsonData = convertToJSON();
+    const blob = new Blob([jsonData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   return (
     <>
       <div className="mainDiv">
-        <div class="inputDiv">
+        <div className="inputDiv">
           <input type="file" name="file" onChange={handleUpload} />
         </div>
-        {data && (
-          <table>
-            <thead>
-              <tr>
-                {data[0].rows[0].map((header, index) => (
-                  <th key={index}>{header}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data[0].rows.slice(1).map((row, rowIndex) =>
-                // (row, rowIndex) => console.log(row[rowIndex])
-                row[rowIndex] != undefined ? (
-                  <tr key={rowIndex}>
-                    {row.map((cell, cellIndex) => (
-                      <td key={cellIndex}>{cell}</td>
-                    ))}
-                  </tr>
-                ) : null
-              )}
-            </tbody>
-          </table>
+
+        {!data && <Header />}
+        <Table data={data} setShowJson={setShowJson} />
+        {showJson && (
+          <JsonShow
+            handleDownload={handleDownload}
+            convertToJSON={convertToJSON()}
+            setShowJson={setShowJson}
+          />
         )}
+        {/* {data && (
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  {data[0].rows[0].map((header, index) => (
+                    <th key={index}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data[0].rows.slice(1).map((row, rowIndex) =>
+                  row[rowIndex] !== undefined ? (
+                    <tr key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <td key={cellIndex}>{cell}</td>
+                      ))}
+                    </tr>
+                  ) : null
+                )}
+              </tbody>
+            </table>
+            <div className="jsonOutput">
+              <h2>JSON Output:</h2>
+              <button onClick={handleDownload}>Download JSON</button>
+              <pre>{convertToJSON()}</pre>
+            </div>
+          </div>
+        )} */}
       </div>
     </>
   );
