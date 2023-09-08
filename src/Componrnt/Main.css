@@ -78,3 +78,17 @@ tr,th,td {
     right: 100px;
     top: 70px;
 }
+@media screen and (max-width: 600px) and (max-height: 900px) and (orientation: portrait) {
+    .headingDiv {
+      top: 50%;
+      height: 500px;
+      overflow: scroll;
+    }
+    .jsonOutput pre {
+        text-align: left;
+    margin-left: 107px;
+    }
+    .jsonOutput { 
+        width: max-content;
+  }
+}

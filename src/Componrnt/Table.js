@@ -2,7 +2,7 @@ const Table = ({ data, setShowJson }) => {
   return (
     <>
       {data && (
-        <div>
+        <div className="mainTableDiv">
           <button className="jsonShowBtn" onClick={() => setShowJson(true)}>
             Show Json
           </button>
